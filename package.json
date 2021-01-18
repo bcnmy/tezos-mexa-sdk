@@ -1,0 +1,50 @@
+{
+  "name": "mexa-tezos-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "unpkg": "dist/mexa.min.js",
+  "types": "dist/cjs/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p ./tsconfig-cjs.json && npm run browserify",
+    "browserify": "tsc -p ./tsconfig-browserify.json && browserify ./dist/browserify/index.js -s mexa | npx uglifyjs > ./dist/mexa.min.js && rm -rf dist/browserify",
+    "prettier": "prettier --write 'src/**/*'",
+    "lint": "eslint 'src/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' --fix",
+    "prepare": "npm run build",
+    "test": "TS_NODE_PROJECT='tsconfig-test.json' mocha --require ts-node/register --require source-map-support/register --full-trace --timeout 40000 ./test/index.ts",
+    "docs:serve": "docsify serve ./docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@airgap/beacon-sdk": "^2.0.0",
+    "@taquito/local-forging": "^7.1.0-beta.0",
+    "@taquito/taquito": "^7.1.0-beta.0",
+    "blakejs": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "browserify": "^17.0.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "docsify-cli": "^4.4.2",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jsdom": "^16.4.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^8.2.1",
+    "prettier": "^2.1.2",
+    "sinon": "^9.2.3",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3",
+    "uglify-js": "^3.12.4"
+  }
+}

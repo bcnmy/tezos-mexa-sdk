@@ -1,0 +1,36 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["@typescript-eslint", "import"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "es6",
+    "sourceType": "module",
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": "./"
+  },
+  "rules": {
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  },
+  "env": {
+    "amd": true,
+    "node": true,
+    "browser": true
+  }
+}
