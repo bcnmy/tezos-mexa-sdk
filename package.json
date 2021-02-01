@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@airgap/beacon-sdk": "^2.0.0",
+    "@airgap/beacon-sdk": "^2.1.0",
     "@taquito/local-forging": "^7.1.0-beta.0",
     "@taquito/taquito": "^7.1.0-beta.0",
     "blakejs": "^1.1.0"
