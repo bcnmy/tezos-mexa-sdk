@@ -8,7 +8,6 @@ import { EVENTS, RESPONSE_CODES, STATUS, config } from "./config";
 
 import { EventEmitter } from "events";
 import { MetaTxDAppClient } from "./dappClient";
-import { NativeMetaTransactionRequest } from "./types";
 import axios from "axios";
 
 const eventEmitter = new EventEmitter();
@@ -27,6 +26,7 @@ export class BiconomyDappClient extends MetaTxDAppClient {
   private isBiconomy = true;
   private status;
   private apiKey: string;
+  private dappId: string | null = null;
   private dappAPIMap: { [apiName: string]: string };
   private smartContractEntryPointsMap: { [address: string]: string } = {};
   private strictMode = false;
@@ -147,27 +147,27 @@ export class BiconomyDappClient extends MetaTxDAppClient {
     );
 
     console.log("Forming meta tx req ...");
-    const metaTxRequest: NativeMetaTransactionRequest = {
-      metaTxData: {
-        params: JSON.stringify(operationDetails[0].parameters?.value as any),
-        from: publicKey,
-        gasLimit,
-        storageLimit,
-        contractAddress: operationDetails[0].destination,
-        methodType: "write",
-        amount: Number(operationDetails[0].amount),
-        entrypoint: operationDetails[0].parameters?.entrypoint as any,
-        apiId: "8",
-      },
+    const metaTxRequest = {
+      params: JSON.stringify(operationDetails[0].parameters),
+      from: publicKey,
+      gasLimit,
+      storageLimit,
+      to: operationDetails[0].destination,
+      methodType: "write",
+      amount: Number(operationDetails[0].amount),
+      apiId: (this.dappAPIMap[operationDetails[0].destination.toLowerCase()][
+        operationDetails[0].parameters?.entrypoint as any
+      ] as any)["id"],
       networkId: this.chainId,
-      dappId: "09",
+      dappId: String(this.dappId),
     };
 
     console.log("Sending to biconomy ...");
-    const metaTxApi = `${baseURL}/meta-tx`;
+    const metaTxApi = `${baseURL}/api/v2/meta-tx/native`;
+    axiosInstance.defaults.headers.common["x-api-key"] = this.apiKey;
     const { status, data } = await axiosInstance.post(metaTxApi, metaTxRequest);
 
-    if (status !== 200 && status !== 201) {
+    if (status !== 201) {
       throw new Error(data);
     }
 
@@ -234,6 +234,7 @@ export class BiconomyDappClient extends MetaTxDAppClient {
       // Dapp found
       const dappNetworkId = dappResponse.dapp.networkId;
       const dappId = dappResponse.dapp._id;
+      this.dappId = dappId;
       _logMessage(
         `Network id corresponding to dapp id ${dappId} is ${dappNetworkId}`
       );
