@@ -1,25 +1,12 @@
 import { ChainIds } from "@taquito/taquito";
 
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const baseConfig = {
   version: "v1",
   loginDomainName: "Biconomy Login",
   loginVersion: "1",
-  // baseURL: "https://api.biconomy.io",
-  baseURL: "http://127.0.0.1:2000",
+  baseURL: "https://api.biconomy.io",
   JSON_RPC_VERSION: "2.0",
-  PAYMENT_TOKEN_CONTRACT: ZERO_ADDRESS,
-  PAYMENT_TOKEN_AMOUNT: 0,
-  NONCE_BATCH_ID: 0,
-  EXPIRY: 0,
-  BASE_GAS: 0,
-  RELAYER_ADDRESS: ZERO_ADDRESS,
-  TOKEN_CONTRACT_ADDRESS: ZERO_ADDRESS,
-  DEFAULT_RELAYER_PAYMENT_TOKEN_ADDRESS: ZERO_ADDRESS,
-  DEFAULT_RELAYER_PAYMENT_AMOUNT: 0,
-  DEFAULT_DESCRIPTION: "Smart Contract Interaction",
   logsEnabled: false,
-  USER_ACCOUNT: "biconomyUserAcct",
 };
 
 const config = {

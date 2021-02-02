@@ -17,10 +17,12 @@ const axiosInstance = axios.create({
   method: "GET",
   timeout: 30000,
   responseType: "json",
+  validateStatus: (status: number) => true,
 });
 
 // Key inside local storage
 const META_TX_ENABLED: any = "meta-tx-enabled";
+
 export class BiconomyDappClient extends MetaTxDAppClient {
   private isBiconomy = true;
   private status;
@@ -193,6 +195,7 @@ export class BiconomyDappClient extends MetaTxDAppClient {
 
       // Check current network id and dapp network id registered on dashboard
       const getDappAPI = `${baseURL}/api/${config.version}/dapp`;
+      axiosInstance.defaults.headers.common["x-api-key"] = apiKey;
       const { status, data: dappResponse } = await axiosInstance.get(
         getDappAPI
       );
@@ -297,24 +300,27 @@ export class BiconomyDappClient extends MetaTxDAppClient {
     }
   }
 
-  private async checkUserLogin(dappId: string) {
-    const userLocalAccount = getFromStorage(config.USER_ACCOUNT);
-    if (userLocalAccount) {
-      const accountInfo = await this.getActiveAccount();
-      if (!accountInfo) {
-        eventEmitter.emit(
-          EVENTS.BICONOMY_ERROR,
-          formatMessage(
-            RESPONSE_CODES.USER_ACCOUNT_NOT_FOUND,
-            "Could not get user account"
-          )
-        );
-      }
-
-      const { publicKey } = accountInfo as any;
-      localStorage.setItem(config.USER_ACCOUNT, publicKey);
-      eventEmitter.emit(EVENTS.SMART_CONTRACT_DATA_READY, dappId, this);
+  /**
+   * Method used to listen to events emitted from the SDK
+   */
+  onEvent(type: string, callback: any) {
+    if (
+      type === this.READY ||
+      type === this.ERROR ||
+      type === this.LOGIN_CONFIRMATION
+    ) {
+      eventEmitter.on(type, callback);
+      return this;
+    } else {
+      throw formatMessage(
+        RESPONSE_CODES.EVENT_NOT_SUPPORTED,
+        `${type} event is not supported.`
+      );
     }
+  }
+
+  private async checkUserLogin(dappId: string) {
+    eventEmitter.emit(EVENTS.SMART_CONTRACT_DATA_READY, dappId, this);
   }
 }
 
@@ -337,55 +343,52 @@ function formatMessage(code: number | string, message: string) {
 }
 
 // On getting smart contract data get the API data also
-eventEmitter.on(EVENTS.SMART_CONTRACT_DATA_READY, (dappId, engine) => {
-  // Get DApp API information from Database
-  // let getAPIInfoAPI = `${baseURL}/api/${config.version}/meta-api`;
-  // fetch(getAPIInfoAPI, getFetchOptions("GET", engine.apiKey))
-  //   .then((response) => response.json())
-  //   .then(function (response) {
-  //     if (response && response.listApis) {
-  //       let apiList = response.listApis;
-  //       for (let i = 0; i < apiList.length; i++) {
-  //         let contractAddress = apiList[i].contractAddress;
-  //         // TODO: In case of SCW(Smart Contract Wallet) there'll be no contract address. Save SCW as key in that case.
-  //         if (contractAddress) {
-  //           if (!engine.dappAPIMap[contractAddress]) {
-  //             engine.dappAPIMap[contractAddress] = {};
-  //           }
-  //           engine.dappAPIMap[contractAddress][apiList[i].method] = apiList[i];
-  //         } else {
-  //           if (!engine.dappAPIMap[config.SCW]) {
-  //             engine.dappAPIMap[config.SCW] = {};
-  //           }
-  //           engine.dappAPIMap[config.SCW][apiList[i].method] = apiList[i];
-  //         }
-  //       }
-  //       eventEmitter.emit(EVENTS.DAPP_API_DATA_READY, engine);
-  //     }
-  //   })
-  //   .catch(function (error) {
-  //     _logMessage(error);
-  //   });
+eventEmitter.on(EVENTS.SMART_CONTRACT_DATA_READY, async (dappId, engine) => {
+  try {
+    // Get DApp API information from Database
+    const { baseURL } = config;
+    let getAPIInfoAPI = `${baseURL}/api/${config.version}/meta-api`;
+    axiosInstance.defaults.headers.common["x-api-key"] = engine.apiKey;
+    const { status, data: response } = await axiosInstance.get(getAPIInfoAPI);
+    if (status !== 200) {
+      eventEmitter.emit(
+        EVENTS.BICONOMY_ERROR,
+        formatMessage(
+          RESPONSE_CODES.ERROR_RESPONSE,
+          "Error while querying meta APIs"
+        ),
+        response
+      );
+    }
+
+    if (response && response.listApis) {
+      let apiList = response.listApis;
+      for (let i = 0; i < apiList.length; i++) {
+        let contractAddress = apiList[i].contractAddress;
+        if (contractAddress) {
+          if (!engine.dappAPIMap[contractAddress]) {
+            engine.dappAPIMap[contractAddress] = {};
+          }
+          engine.dappAPIMap[contractAddress][apiList[i].method] = apiList[i];
+        } else {
+          // contract address can never be null
+          eventEmitter.emit(
+            EVENTS.BICONOMY_ERROR,
+            "Some error occured. Please contact Biconomy team."
+          );
+        }
+      }
+      eventEmitter.emit(EVENTS.DAPP_API_DATA_READY, engine);
+    }
+  } catch (error) {
+    _logMessage(error);
+  }
 });
 
 eventEmitter.on(EVENTS.DAPP_API_DATA_READY, (engine) => {
   engine.status = STATUS.BICONOMY_READY;
   eventEmitter.emit(STATUS.BICONOMY_READY);
 });
-
-function removeFromStorage(key: string) {
-  if (typeof localStorage !== "undefined") {
-    localStorage.removeItem(key);
-  }
-}
-
-function getFromStorage(key: string) {
-  if (typeof localStorage !== "undefined") {
-    return localStorage.getItem(key);
-  }
-
-  return null;
-}
 
 eventEmitter.on(EVENTS.DAPP_API_DATA_READY, (engine) => {
   engine.status = STATUS.BICONOMY_READY;
