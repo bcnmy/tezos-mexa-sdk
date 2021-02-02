@@ -2,10 +2,15 @@
 
 ## Transaction Lifecycle
 
-- Queued
-- Broadcasted
-- Success
-- Failure
+Each transaction submitted to Biconomy undergoes various stages. The corresponding statuses are listed below:
+
+- `Queued`
+- `Broadcasted`
+- `Success`
+- `Failure`
+
+TODO
+[Diagram](...)
 
 ## Querying operation hash
 
@@ -35,12 +40,6 @@ wallet.client.getTransactionHash(function (error, transactionHash) {
   );
   /** On success logic **/
 });
-```
-
-#### **JS file**
-
-```js
-await wallet.client.getTransactionHash();
 ```
 
 <!-- tabs:end -->

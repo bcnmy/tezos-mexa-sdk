@@ -41,12 +41,12 @@ npm i something-biconomy-tezos --save
 import { BiconomyDAppClient } from "something-biconomy-tezos";
 
 const options = {
-  name: "",
-  iconUrl: "",
+  name: "<yourDappName>",
+  iconUrl: "<yourDappFaviconURL>",
   preferredNetwork: "delphinet",
 };
 const bcnmyDappClient = new BiconomyDappClient(options, {
-  apiKey: "",
+  apiKey: "<biconomyAPIKey>",
 });
 ```
 
@@ -67,12 +67,12 @@ wallet.client = bcnmyDappClient;
 const { BiconomyDAppClient } = require("something-biconomy-tezos");
 
 const options = {
-  name: "",
-  iconUrl: "",
+  name: "<yourDappName>",
+  iconUrl: "<yourDappFaviconURL>",
   preferredNetwork: "delphinet",
 };
 const bcnmyDappClient = new BiconomyDappClient(options, {
-  apiKey: "",
+  apiKey: "<biconomyAPIKey>",
 });
 ```
 
@@ -83,14 +83,6 @@ const { BeaconWallet } = require("@taquito/beacon-wallet");
 
 const wallet = new BeaconWallet(options);
 wallet.client = bcnmyDappClient;
-```
-
-#### **JS file**
-
-### Initialize your DApp after Mexa initialization {docsify-ignore}
-
-```js
-
 ```
 
 <!-- tabs:end -->

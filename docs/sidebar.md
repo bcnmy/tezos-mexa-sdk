@@ -2,6 +2,7 @@
 - [Features](/?id=features)
 - [QuickStart](quickstart)
   - [Installation](quickstart#installation)
+- [Meta Transactions](quickstart#mexa-initialization)
   - [Initialization](quickstart#mexa-initialization)
   - [Check if meta transactions are enabled](meta-txn/biconomy-status)
   - [Querying for transaction status](meta-txn/txn-status)

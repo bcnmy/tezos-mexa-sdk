@@ -1,4 +1,4 @@
-# Meta transaction status
+# Meta transaction enable status
 
 To check whether the meta transactions has been enabled,
 
