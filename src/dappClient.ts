@@ -199,7 +199,7 @@ export class MetaTxDAppClient extends DAppClient {
   private async trackStatus(requestId: string, networkId: string) {
     const { baseURL } = config;
     const response = await axiosInstance.get(
-      `${baseURL}/meta-tx/status?requestId=${requestId}&networkId=${networkId}`
+      `${baseURL}/api/v2/meta-tx/native/status?requestId=${requestId}&networkId=${networkId}`
     );
     if (response.status !== 200) {
       throw new Error("Error occurred while querying for request status");
