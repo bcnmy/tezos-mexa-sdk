@@ -6,7 +6,7 @@ const baseConfig = {
   loginVersion: "1",
   baseURL: "https://api.biconomy.io",
   JSON_RPC_VERSION: "2.0",
-  logsEnabled: false,
+  logsEnabled: true,
 };
 
 const config = {
@@ -66,9 +66,13 @@ const NETWORK_CONFIG: {
     networkId: ChainIds.MAINNET,
   },
   delphinet: {
-    rpc: "https://delphinet-tezos.giganode.io",
+    rpc: "https://delphinet.smartpy.io",
     networkId: ChainIds.DELPHINET,
   },
+  edonet: {
+    rpc: "https://testnet-tezos.giganode.io",
+    networkId: ChainIds.EDONET,
+  }
 };
 
 export {
