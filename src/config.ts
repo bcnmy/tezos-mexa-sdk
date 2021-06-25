@@ -65,13 +65,9 @@ const NETWORK_CONFIG: {
     rpc: "https://api.tez.ie/rpc/mainnet",
     networkId: ChainIds.MAINNET,
   },
-  delphinet: {
-    rpc: "https://delphinet.smartpy.io",
-    networkId: ChainIds.DELPHINET,
-  },
-  edonet: {
-    rpc: "https://testnet-tezos.giganode.io",
-    networkId: ChainIds.EDONET,
+  florencenet: {
+    rpc: "https://florencenet.smartpy.io",
+    networkId: ChainIds.FLORENCENET,
   }
 };
 
