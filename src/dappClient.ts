@@ -5,6 +5,7 @@ import {
   NetworkType,
   PartialTezosTransactionOperation,
   RequestOperationInput,
+  SigningType,
 } from "@airgap/beacon-sdk";
 import { CODEC, encoders } from "@taquito/local-forging";
 import { ChainIds, Context, TezosToolkit } from "@taquito/taquito";
@@ -138,6 +139,7 @@ export class MetaTxDAppClient extends DAppClient {
         signingType,
         senderId,
       } = await this.requestSignPayload({
+        signingType: SigningType.MICHELINE,
         payload: messageToSign,
       });
       senderIdOfWallet = senderId;

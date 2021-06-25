@@ -83,7 +83,7 @@ export class BiconomyDappClient extends MetaTxDAppClient {
   async requestOperation(input: OperationRequestInput) {
     const metaTxStatus = await this.storage.get(META_TX_ENABLED);
     if (metaTxStatus === "enabled") {
-      return this.requestMetaTransaction(input);
+      return this.requestMetaTransaction(input) as any;
     } else {
       const op = this.beaconClient.requestOperation.bind(this);
       return op(input);
@@ -146,7 +146,6 @@ export class BiconomyDappClient extends MetaTxDAppClient {
       operationDetails[0].parameters
     );
 
-    console.log("Forming meta tx req ...");
     const metaTxRequest = {
       params: JSON.stringify(operationDetails[0].parameters),
       from: publicKey,
@@ -290,6 +289,7 @@ export class BiconomyDappClient extends MetaTxDAppClient {
         }
       }
     } catch (error) {
+      _logMessage(error);
       eventEmitter.emit(
         EVENTS.BICONOMY_ERROR,
         formatMessage(
@@ -321,6 +321,7 @@ export class BiconomyDappClient extends MetaTxDAppClient {
   }
 
   private async checkUserLogin(dappId: string) {
+    _logMessage("Smart contract ready");
     eventEmitter.emit(EVENTS.SMART_CONTRACT_DATA_READY, dappId, this);
   }
 }
